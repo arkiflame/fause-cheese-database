@@ -55,6 +55,19 @@ app.get('/api/cheeses', async (req, res) => {
   }
 });
 
+// DELETE Route: Remove a cheese by its ID
+app.post('/api/cheeses/delete/:id', async (req, res) => {
+  try {
+    const deletedCheese = await Cheese.findByIdAndDelete(req.params.id);
+    if (!deletedCheese) {
+      return res.status(404).json({ message: 'Cheese not found' });
+    }
+    res.json({ message: 'Cheese deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting cheese', error: error.message });
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

@@ -35,3 +35,15 @@ button {
     border: none;
     border-radius: 5px;
 }
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    margin-top: 10px;
+    font-size: 12px;
+    padding: 5px 10px;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
