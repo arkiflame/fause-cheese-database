@@ -9,12 +9,38 @@
 <body>
     <header>
         <h1>🧀 Cheese Collection</h1>
-        <button id="fetch-btn">Load Cheeses</button>
+        <nav class="tabs" role="tablist">
+            <button class="tab active" role="tab" id="tab-archive" aria-selected="true" aria-controls="panel-archive">Archive</button>
+            <button class="tab" role="tab" id="tab-add" aria-selected="false" aria-controls="panel-add">Add Cheese</button>
+        </nav>
     </header>
 
-    <main id="cheese-container">
-        <p>Click the button to load the data!</p>
-    </main>
+    <div id="panel-archive" class="tab-panel active" role="tabpanel" aria-labelledby="tab-archive">
+        <section class="archive-section">
+            <button id="fetch-btn">Load Cheeses</button>
+            <main id="cheese-container">
+                <p>Click the button to load the data!</p>
+            </main>
+        </section>
+    </div>
+
+    <div id="panel-add" class="tab-panel" role="tabpanel" aria-labelledby="tab-add" hidden>
+        <section class="add-cheese-section">
+            <h2>Add a Cheese</h2>
+            <form id="add-cheese-form">
+                <label for="cheese-name">Name *</label>
+                <input type="text" id="cheese-name" name="name" required placeholder="e.g. Brie">
+                <label for="cheese-origin">Origin *</label>
+                <input type="text" id="cheese-origin" name="origin" required placeholder="e.g. France">
+                <label for="cheese-milk">Milk type *</label>
+                <input type="text" id="cheese-milk" name="milk" required placeholder="e.g. Cow">
+                <label for="cheese-description">Description</label>
+                <textarea id="cheese-description" name="description" rows="3" placeholder="Optional details..."></textarea>
+                <button type="submit">Add Cheese</button>
+            </form>
+            <p id="form-message" class="form-message" aria-live="polite"></p>
+        </section>
+    </div>
 
     <script src="script.js"></script>
 </body>
