@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const Cheese = require('./models/Cheese');
+const { scrapeCheeseFromUrl } = require('./lib/scraper');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,24 @@ mongoose.connect(process.env.MONGODB_URI)
 // A simple test route to make sure our API works
 app.get('/api/test', (req, res) => {
   res.json({ message: 'The Cheese API is up and running!' });
+});
+
+// POST Route: Scrape cheese info from a URL
+app.post('/api/scrape', async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ message: 'URL is required' });
+    }
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return res.status(400).json({ message: 'Only http and https URLs are allowed' });
+    }
+    const data = await scrapeCheeseFromUrl(url);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Scraping failed', error: error.message });
+  }
 });
 
 // Serve static files from the "public" folder

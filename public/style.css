@@ -92,6 +92,48 @@ header h1 {
     border: 1px solid var(--border);
 }
 
+.scrape-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.scrape-section h3 {
+    margin: 0 0 8px;
+    color: var(--cheese-orange);
+    font-size: 1rem;
+}
+
+.scrape-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0 0 12px;
+}
+
+.scrape-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.scrape-input-row input {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 1rem;
+    background: var(--bg-input);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.scrape-input-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.scrape-input-row button {
+    flex-shrink: 0;
+}
+
 .add-cheese-section h2 {
     margin-top: 0;
     color: var(--cheese-orange);

@@ -17,6 +17,52 @@ tabs.forEach((tab, index) => {
     });
 });
 
+// Scrape from URL
+document.getElementById('scrape-btn').addEventListener('click', async () => {
+    const urlInput = document.getElementById('scrape-url');
+    const messageEl = document.getElementById('scrape-message');
+    const btn = document.getElementById('scrape-btn');
+    const url = urlInput.value.trim();
+
+    if (!url) {
+        messageEl.textContent = 'Please enter a URL';
+        messageEl.className = 'form-message error';
+        return;
+    }
+
+    messageEl.textContent = 'Fetching...';
+    messageEl.className = 'form-message';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/scrape', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            const form = document.getElementById('add-cheese-form');
+            form.name.value = data.name || '';
+            form.origin.value = data.origin || '';
+            form.milk.value = data.milk || '';
+            form.description.value = data.description || '';
+            messageEl.textContent = data.name ? 'Form filled! Review and add below.' : 'Could not extract much—try editing manually.';
+            messageEl.className = 'form-message success';
+        } else {
+            messageEl.textContent = data.message || data.error || 'Scraping failed';
+            messageEl.className = 'form-message error';
+        }
+    } catch (error) {
+        messageEl.textContent = 'Error: Is the server running?';
+        messageEl.className = 'form-message error';
+        console.error('Scrape error:', error);
+    } finally {
+        btn.disabled = false;
+    }
+});
+
 // Add cheese form handler
 document.getElementById('add-cheese-form').addEventListener('submit', async (e) => {
     e.preventDefault();

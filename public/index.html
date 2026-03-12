@@ -26,6 +26,15 @@
 
     <div id="panel-add" class="tab-panel" role="tabpanel" aria-labelledby="tab-add" hidden>
         <section class="add-cheese-section">
+            <div class="scrape-section">
+                <h3>Import from URL</h3>
+                <p class="scrape-hint">Paste a link to a cheese page (Wikipedia, cheese shop, etc.) to auto-fill the form.</p>
+                <div class="scrape-input-row">
+                    <input type="url" id="scrape-url" placeholder="https://...">
+                    <button type="button" id="scrape-btn">Fetch</button>
+                </div>
+                <p id="scrape-message" class="form-message" aria-live="polite"></p>
+            </div>
             <h2>Add a Cheese</h2>
             <form id="add-cheese-form">
                 <label for="cheese-name">Name *</label>

@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^1.45.0",
+    "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mongodb": "^7.1.0",
