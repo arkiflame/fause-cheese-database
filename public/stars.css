@@ -1,0 +1,23 @@
+.star {
+    font-size: 1.5rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.star:hover,
+.star.hovered {
+    color: #ffb3b6;
+}
+.star.rated {
+    color: #ffb3b6;
+    text-shadow: 0 0 5px rgba(255, 179, 182, 0.4);
+}
+.rating-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rating-text {
+    font-size: 0.9em;
+    color: #555;
+}

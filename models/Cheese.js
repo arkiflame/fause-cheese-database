@@ -16,8 +16,16 @@ const cheeseSchema = new mongoose.Schema({
   description: {
     type: String,
     required: false // Optional description for now
+  },
+  status: {
+    type: String,
+    enum: ['verified', 'pending_verification', 'rejected'],
+    default: 'verified'
   }
 });
+
+// Case-insensitive index for name
+cheeseSchema.index({ name: 1 }, { collation: { locale: 'en', strength: 2 }, unique: true });
 
 const Cheese = mongoose.model('Cheese', cheeseSchema);
 

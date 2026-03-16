@@ -2,24 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Fause | The Cheese Database</title>
     <link rel="icon" type="image/x-icon" href="fause.ico">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="stars.css">
 </head>
 <body>
     <header>
-        <h1>🧀 Cheese Collection</h1>
+        <div class="header-content">
+            <div id="header-logo-placeholder">
+                <img src="header-logo.png" alt="Fause | The Cheese Database" id="header-logo">
+            </div>
+            <div class="auth-dropdown-container">
+                <button id="auth-toggle-btn" class="dropdown-btn">Login / Register ▾</button>
+                <div id="auth-dropdown-menu" class="dropdown-content">
+                    <!-- Shown when NOT logged in -->
+                    <div id="auth-forms">
+                        <div class="auth-box">
+                            <h2>Login</h2>
+                            <form id="login-form">
+                                <input type="text" id="login-username" required placeholder="Username" autocomplete="username">
+                                <input type="password" id="login-password" required placeholder="Password" autocomplete="current-password">
+                                <button type="submit" class="submit-btn primary-btn">Login</button>
+                            </form>
+                            <p id="login-message" class="form-message"></p>
+                        </div>
+                        <div class="auth-box" style="margin-top: 15px;">
+                            <h2>Register</h2>
+                            <form id="register-form">
+                                <input type="text" id="register-username" required placeholder="Username" autocomplete="username">
+                                <input type="password" id="register-password" required placeholder="Password (min 6 chars)" autocomplete="new-password">
+                                <button type="submit" class="submit-btn secondary-btn">Register</button>
+                            </form>
+                            <p id="register-message" class="form-message"></p>
+                        </div>
+                    </div>
+                    <!-- Shown when LOGGED IN -->
+                    <div id="auth-user-menu" hidden>
+                        <p id="user-greeting" style="margin-bottom: 15px; font-weight: bold;"></p>
+                        <button id="logout-btn" class="submit-btn danger-btn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <nav class="tabs" role="tablist">
             <button class="tab active" role="tab" id="tab-archive" aria-selected="true" aria-controls="panel-archive">Archive</button>
+            <button class="tab" role="tab" id="tab-lists" aria-selected="false" aria-controls="panel-lists" hidden>My Lists</button>
             <button class="tab" role="tab" id="tab-add" aria-selected="false" aria-controls="panel-add">Add Cheese</button>
         </nav>
     </header>
 
     <div id="panel-archive" class="tab-panel active" role="tabpanel" aria-labelledby="tab-archive">
         <section class="archive-section">
-            <button id="fetch-btn">Load Cheeses</button>
+            <div class="archive-controls">
+                <button id="fetch-btn">Load Cheeses</button>
+                <input type="text" id="cheese-search" placeholder="Search cheeses..." style="margin-left: 10px; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-input); color: var(--text);">
+                <button id="clear-all-btn" class="delete-btn admin-only" style="margin-left: 10px; background-color: #ff4d4d; color: white;" hidden>Clear All</button>
+            </div>
+            
+
             <main id="cheese-container">
                 <p>Click the button to load the data!</p>
+            </main>
+        </section>
+    </div>
+
+    <div id="panel-lists" class="tab-panel" role="tabpanel" aria-labelledby="tab-lists" hidden>
+        <section class="lists-section">
+            <h2>My Lists</h2>
+            <form id="create-list-form" style="margin-bottom: 20px;">
+                <input type="text" id="new-list-name" required placeholder="New List Name">
+                <button type="submit">Create List</button>
+            </form>
+            <p id="list-message" class="form-message"></p>
+            
+            <main id="lists-container">
+                <p>Loading lists...</p>
             </main>
         </section>
     </div>
@@ -35,13 +92,22 @@
                 </div>
                 <p id="scrape-message" class="form-message" aria-live="polite"></p>
             </div>
-            <div class="bulk-import-section">
+            <div class="bulk-import-section admin-only" hidden>
                 <h3>Bulk Import (Admin)</h3>
                 <p class="scrape-hint">Paste multiple cheese URLs (one per line). The server will scrape and add them all.</p>
                 <textarea id="bulk-urls" rows="4" placeholder="https://en.wikipedia.org/wiki/Brie
 https://en.wikipedia.org/wiki/Cheddar_cheese"></textarea>
                 <button type="button" id="bulk-import-btn">Import URLs</button>
                 <p id="bulk-import-message" class="form-message" aria-live="polite"></p>
+            </div>
+            
+            <div class="csv-import-section admin-only" hidden>
+                <h3>CSV Upload (Admin)</h3>
+                <p class="scrape-hint">Paste CSV data (Name, Origin, Milk, Description). First row must be headers.</p>
+                <textarea id="csv-data" rows="4" placeholder="Name,Origin,Milk,Description
+Brie,France,Cow,Soft creamy cheese..."></textarea>
+                <button type="button" id="csv-import-btn">Import CSV</button>
+                <p id="csv-import-message" class="form-message" aria-live="polite"></p>
             </div>
             <h2>Add a Cheese</h2>
             <form id="add-cheese-form">
@@ -58,6 +124,7 @@ https://en.wikipedia.org/wiki/Cheddar_cheese"></textarea>
             <p id="form-message" class="form-message" aria-live="polite"></p>
         </section>
     </div>
+
 
     <script src="script.js"></script>
 </body>
