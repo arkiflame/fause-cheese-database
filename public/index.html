@@ -35,6 +35,14 @@
                 </div>
                 <p id="scrape-message" class="form-message" aria-live="polite"></p>
             </div>
+            <div class="bulk-import-section">
+                <h3>Bulk Import (Admin)</h3>
+                <p class="scrape-hint">Paste multiple cheese URLs (one per line). The server will scrape and add them all.</p>
+                <textarea id="bulk-urls" rows="4" placeholder="https://en.wikipedia.org/wiki/Brie
+https://en.wikipedia.org/wiki/Cheddar_cheese"></textarea>
+                <button type="button" id="bulk-import-btn">Import URLs</button>
+                <p id="bulk-import-message" class="form-message" aria-live="polite"></p>
+            </div>
             <h2>Add a Cheese</h2>
             <form id="add-cheese-form">
                 <label for="cheese-name">Name *</label>

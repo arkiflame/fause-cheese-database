@@ -38,6 +38,68 @@ app.post('/api/scrape', async (req, res) => {
   }
 });
 
+// POST Route: Bulk import cheeses from a list of URLs
+app.post('/api/import', async (req, res) => {
+  try {
+    const { urls } = req.body;
+    if (!Array.isArray(urls) || urls.length === 0) {
+      return res.status(400).json({ message: 'urls must be a non-empty array of strings' });
+    }
+
+    const results = [];
+
+    for (const rawUrl of urls) {
+      if (typeof rawUrl !== 'string' || !rawUrl.trim()) {
+        results.push({ url: rawUrl, status: 'skipped', reason: 'Invalid URL string' });
+        continue;
+      }
+
+      try {
+        const parsed = new URL(rawUrl);
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+          results.push({ url: rawUrl, status: 'skipped', reason: 'Only http/https allowed' });
+          continue;
+        }
+
+        const scraped = await scrapeCheeseFromUrl(rawUrl);
+        if (!scraped || !scraped.name) {
+          results.push({ url: rawUrl, status: 'failed', reason: 'No cheese name extracted' });
+          continue;
+        }
+
+        const cheeseDoc = new Cheese({
+          name: scraped.name,
+          origin: scraped.origin || 'Unknown',
+          milk: scraped.milk || 'Unknown',
+          description: scraped.description || '',
+        });
+
+        await cheeseDoc.save();
+        results.push({
+          url: rawUrl,
+          status: 'imported',
+          cheeseId: cheeseDoc._id,
+          confidence: scraped.confidence ?? null,
+          issues: scraped.issues ?? [],
+        });
+      } catch (err) {
+        results.push({ url: rawUrl, status: 'error', reason: err.message });
+      }
+    }
+
+    const summary = {
+      imported: results.filter(r => r.status === 'imported').length,
+      failed: results.filter(r => r.status === 'failed' || r.status === 'error').length,
+      skipped: results.filter(r => r.status === 'skipped').length,
+      results,
+    };
+
+    res.status(200).json(summary);
+  } catch (error) {
+    res.status(500).json({ message: 'Bulk import failed', error: error.message });
+  }
+});
+
 // Serve static files from the "public" folder
 app.use(express.static('public'));
 

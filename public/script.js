@@ -17,8 +17,8 @@ tabs.forEach((tab, index) => {
     });
 });
 
-// Scrape from URL
-document.getElementById('scrape-btn').addEventListener('click', async () => {
+// Scrape from URL (auto + button)
+async function runScrapeFromUrl() {
     const urlInput = document.getElementById('scrape-url');
     const messageEl = document.getElementById('scrape-message');
     const btn = document.getElementById('scrape-btn');
@@ -30,9 +30,9 @@ document.getElementById('scrape-btn').addEventListener('click', async () => {
         return;
     }
 
-    messageEl.textContent = 'Fetching...';
+    messageEl.textContent = 'Scraping and asking Gemini...';
     messageEl.className = 'form-message';
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
 
     try {
         const response = await fetch('/api/scrape', {
@@ -48,7 +48,17 @@ document.getElementById('scrape-btn').addEventListener('click', async () => {
             form.origin.value = data.origin || '';
             form.milk.value = data.milk || '';
             form.description.value = data.description || '';
-            messageEl.textContent = data.name ? 'Form filled! Review and add below.' : 'Could not extract much—try editing manually.';
+
+            let message = 'Form filled! Review carefully, then add below.';
+            if (typeof data.confidence === 'number') {
+                const pct = Math.round(data.confidence * 100);
+                message = `Gemini filled this in (confidence ~${pct}%). Review carefully, then add below.`;
+            }
+            if (Array.isArray(data.issues) && data.issues.length) {
+                message += ` Issues: ${data.issues.join(' | ')}`;
+            }
+
+            messageEl.textContent = message;
             messageEl.className = 'form-message success';
         } else {
             messageEl.textContent = data.message || data.error || 'Scraping failed';
@@ -58,6 +68,62 @@ document.getElementById('scrape-btn').addEventListener('click', async () => {
         messageEl.textContent = 'Error: Is the server running?';
         messageEl.className = 'form-message error';
         console.error('Scrape error:', error);
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+document.getElementById('scrape-btn').addEventListener('click', runScrapeFromUrl);
+
+// Auto-trigger scrape shortly after URL input changes
+const scrapeUrlInput = document.getElementById('scrape-url');
+let scrapeDebounce;
+scrapeUrlInput.addEventListener('input', () => {
+    clearTimeout(scrapeDebounce);
+    if (!scrapeUrlInput.value.trim()) return;
+    scrapeDebounce = setTimeout(runScrapeFromUrl, 800);
+});
+
+// Bulk import (admin)
+document.getElementById('bulk-import-btn').addEventListener('click', async () => {
+    const textarea = document.getElementById('bulk-urls');
+    const messageEl = document.getElementById('bulk-import-message');
+    const btn = document.getElementById('bulk-import-btn');
+
+    const lines = textarea.value
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 0);
+
+    if (lines.length === 0) {
+        messageEl.textContent = 'Please paste at least one URL.';
+        messageEl.className = 'form-message error';
+        return;
+    }
+
+    messageEl.textContent = 'Importing cheeses...';
+    messageEl.className = 'form-message';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urls: lines }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            messageEl.textContent = `Imported: ${data.imported}, Failed: ${data.failed}, Skipped: ${data.skipped}.`;
+            messageEl.className = 'form-message success';
+        } else {
+            messageEl.textContent = data.message || data.error || 'Bulk import failed';
+            messageEl.className = 'form-message error';
+        }
+    } catch (error) {
+        console.error('Bulk import error:', error);
+        messageEl.textContent = 'Error: Is the server running?';
+        messageEl.className = 'form-message error';
     } finally {
         btn.disabled = false;
     }
