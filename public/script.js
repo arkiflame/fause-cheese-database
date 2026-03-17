@@ -448,7 +448,7 @@ document.getElementById('fetch-btn').addEventListener('click', async () => {
                    <select class="cheese-card-list-select" style="padding:4px; border-radius:4px; border:1px solid var(--border); background:var(--bg-input); color:var(--text);">
                        ${listOptionsHtml}
                    </select>
-                   <button class="add-to-list-btn" onclick="addCheeseToSelectedList(this, '${cheese._id}')" style="padding: 4px 12px; font-weight: bold; background-color: var(--primary);">Add</button>
+                   <button class="add-to-list-btn" onclick="addCheeseToSelectedList(this, '${cheese._id}')" style="padding: 4px 12px; font-weight: bold; background-color: var(--accent); color: var(--bg-dark);">Add</button>
                 </div>
             ` : '';
 
